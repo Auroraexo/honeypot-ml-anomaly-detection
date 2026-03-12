@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: detector
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: detector
+  template:
+    metadata:
+      labels:
+        app: detector
+    spec:
+      containers:
+        - name: detector
+          image: abnormal-traffic-detector:local
+          imagePullPolicy: IfNotPresent
+          args: []
+          env:
+            - name: PYTHONUNBUFFERED
+              value: "1"
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+      volumes:
+        - name: data
+          emptyDir: {}
+

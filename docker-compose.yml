@@ -1,0 +1,32 @@
+# 内网异常流量检测系统：Cowrie + Zeek + 检测器 一键启动
+services:
+  cowrie:
+    image: cowrie/cowrie:latest
+    container_name: cowrie
+    ports:
+      - "2222:2222"
+    environment: {}
+    volumes:
+      # cowrie/cowrie 镜像实际日志目录位于 /cowrie/cowrie-git/var/log/cowrie
+      - ./data/cowrie:/cowrie/cowrie-git/var/log/cowrie
+    restart: unless-stopped
+
+  zeek:
+    image: zeek/zeek:latest
+    container_name: zeek
+    volumes:
+      - ./data/zeek:/logs
+    command: ["sh", "-c", "zeek -C -e 'redef Log::default_logdir=\"/logs\";' -r /dev/null 2>/dev/null; exit 0"]
+    restart: "no"
+
+  detector:
+    build: .
+    container_name: detector
+    volumes:
+      - ./data:/app/data
+      - ./config:/app/config:ro
+    depends_on:
+      - cowrie
+    restart: unless-stopped
+    environment:
+      - PYTHONUNBUFFERED=1

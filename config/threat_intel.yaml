@@ -1,0 +1,8 @@
+threat_intel:
+  # 简易威胁情报：高风险 IP 列表（可手动维护或由外部系统同步）
+  high_risk_ips:
+    - "192.168.1.100"
+
+  # 告警增强：若命中高风险 IP，则给告警打标签
+  tag_on_match: true
+

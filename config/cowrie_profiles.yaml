@@ -1,0 +1,59 @@
+profiles:
+  default_ssh:
+    description: "默认 SSH 蜜罐（2222）"
+    ports:
+      - "2222:2222"
+    environment:
+      COWRIE_TELNET_ENABLED: "no"
+      # 让 `uname -v/-r` 与 Ubuntu banner 更一致
+      COWRIE_SHELL_KERNEL_NAME: "Linux"
+      COWRIE_SHELL_KERNEL_VERSION: "5.15.0-xx-generic"
+      COWRIE_SHELL_KERNEL_BUILD_STRING: "#1 SMP Ubuntu 5.15.0-xx-generic"
+      COWRIE_SHELL_OPERATING_SYSTEM: "GNU/Linux"
+      COWRIE_SHELL_HARDWARE_PLATFORM: "x86_64"
+    volumes:
+      - "./cowrie_profiles/ubuntu_like/honeyfs/etc/issue.net:/cowrie/cowrie-git/honeyfs/etc/issue.net:ro"
+      - "./cowrie_profiles/ubuntu_like/honeyfs/etc/motd:/cowrie/cowrie-git/honeyfs/etc/motd:ro"
+
+  ssh_telnet:
+    description: "同时开启 SSH(2222) 与 Telnet(2223)"
+    ports:
+      - "2222:2222"
+      - "2223:2223"
+    environment:
+      COWRIE_TELNET_ENABLED: "yes"
+      # 让 `uname` 输出更像 CentOS/RHEL 系列
+      COWRIE_SHELL_KERNEL_NAME: "Linux"
+      COWRIE_SHELL_KERNEL_VERSION: "3.10.0-1160.el7.x86_64"
+      COWRIE_SHELL_KERNEL_BUILD_STRING: "#1 SMP CentOS 3.10.0-1160.el7.x86_64"
+      COWRIE_SHELL_OPERATING_SYSTEM: "GNU/Linux"
+      COWRIE_SHELL_HARDWARE_PLATFORM: "x86_64"
+    volumes:
+      - "./cowrie_profiles/centos_like/honeyfs/etc/issue.net:/cowrie/cowrie-git/honeyfs/etc/issue.net:ro"
+      - "./cowrie_profiles/centos_like/honeyfs/etc/motd:/cowrie/cowrie-git/honeyfs/etc/motd:ro"
+
+  telnet_only:
+    description: "仅开启 Telnet(2223)，用于模拟不同暴露面"
+    ports:
+      - "2223:2223"
+    environment:
+      COWRIE_SSH_ENABLED: "no"
+      COWRIE_TELNET_ENABLED: "yes"
+      # 与 default_ssh 一致的 Ubuntu 风格 uname
+      COWRIE_SHELL_KERNEL_NAME: "Linux"
+      COWRIE_SHELL_KERNEL_VERSION: "5.15.0-xx-generic"
+      COWRIE_SHELL_KERNEL_BUILD_STRING: "#1 SMP Ubuntu 5.15.0-xx-generic"
+      COWRIE_SHELL_OPERATING_SYSTEM: "GNU/Linux"
+      COWRIE_SHELL_HARDWARE_PLATFORM: "x86_64"
+    volumes:
+      - "./cowrie_profiles/ubuntu_like/honeyfs/etc/issue.net:/cowrie/cowrie-git/honeyfs/etc/issue.net:ro"
+      - "./cowrie_profiles/ubuntu_like/honeyfs/etc/motd:/cowrie/cowrie-git/honeyfs/etc/motd:ro"
+
+rotation:
+  enabled: true
+  interval_seconds: 300
+  order:
+    - default_ssh
+    - ssh_telnet
+    - telnet_only
+

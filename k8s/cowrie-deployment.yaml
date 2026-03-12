@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cowrie
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cowrie
+  template:
+    metadata:
+      labels:
+        app: cowrie
+    spec:
+      containers:
+        - name: cowrie
+          image: cowrie/cowrie:latest
+          ports:
+            - containerPort: 2222
+          env:
+            - name: COWRIE_TELNET_ENABLED
+              value: "no"
+          volumeMounts:
+            - name: cowrie-logs
+              mountPath: /cowrie/var/log/cowrie
+      volumes:
+        - name: cowrie-logs
+          emptyDir: {}
+

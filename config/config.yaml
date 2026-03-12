@@ -1,0 +1,19 @@
+# 内网异常流量检测系统配置
+
+paths:
+  cowrie_log_dir: "data/cowrie"
+  zeek_log_dir: "data/zeek"
+  model_dir: "data/model"
+  alert_dir: "data/alerts"
+
+model:
+  # 演示时可设为 0.3~0.5，便于产生告警；正式环境建议 0.01~0.05
+  contamination: 0.5
+  n_estimators: 100
+  random_state: 42
+
+detector:
+  poll_interval_seconds: 60
+  train_min_samples: 3
+  # 当样本数 <= 此值时且无异常，强制将得分最低的 1 条当作异常（仅演示用，写 0 可关闭）
+  demo_force_anomaly_below_samples: 5
